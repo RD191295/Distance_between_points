@@ -82,13 +82,21 @@ while cap.isOpened():
         break
 
     success, boxes = multiTracker.update(frame)
+    #id_no = 1
+    if success:
+        for i, newbox in enumerate(boxes):
+            p1 = (int(newbox[0]), int(newbox[1]))
+            p2 = (int(newbox[0] + newbox[2]), int(newbox[1] + newbox[3]))
+            cv2.rectangle(frame, p1, p2, colors[i], 2, 1)
+            mid_point = (int((p1[0] + p2[0]) / 2), int((p1[1] + p2[1]) / 2))
+            cv2.circle(frame, mid_point, 5, (0, 0, 255), -1)
+            cv2.putText(frame, "p"+str(i), (mid_point[0]+5,mid_point[1]+5), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
 
-    for i, newbox in enumerate(boxes):
-        p1 = (int(newbox[0]), int(newbox[1]))
-        p2 = (int(newbox[0] + newbox[2]), int(newbox[1] + newbox[3]))
-        cv2.rectangle(frame, p1, p2, colors[i], 2, 1)
-        mid_point = (int((p1[0] + p2[0]) / 2), int((p1[1] + p2[1]) / 2))
-        cv2.circle(frame, mid_point, 5, (0, 0, 255), -1)
+
+
+    else:
+        # Tracking failure
+        cv2.putText(frame, "Tracking failure detected", (100, 80), cv2.FONT_HERSHEY_SIMPLEX, 0.75, (0, 0, 255), 2)
 
     result.write(frame)
     cv2.imshow('MultiTracker', frame)
